@@ -174,10 +174,6 @@ curl -s -X DELETE http://localhost:8080/books/1
 **200 OK** → text: `Deleted book with ID 1.`
 *(Consider `204 No Content` for production.)*
 
-## 📜 License
-
-MIT (or choose your own)
-
 ---
 
 ## 🙌 Credits

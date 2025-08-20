@@ -158,12 +158,6 @@ Received Message: {"text":"first comment"} | count 1
 
 ---
 
-## 📜 License
-
-MIT (or your choice)
-
----
-
 ## 🙌 Credits
 
 * [Sarama](https://github.com/IBM/sarama)

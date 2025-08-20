@@ -179,11 +179,6 @@ curl -s -X DELETE http://localhost:8080/movies/2 | jq
 
 Response: `200 OK` (returns remaining list).
 
----
-
-## 📜 License
-
-MIT (or choose your own)
 
 ---
 
