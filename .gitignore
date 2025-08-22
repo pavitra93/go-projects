@@ -6,6 +6,7 @@
 *.dylib
 *.test
 *.out
+*.toml
 
 # Go build cache & vendor
 /vendor/
