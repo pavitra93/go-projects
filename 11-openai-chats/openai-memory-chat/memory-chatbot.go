@@ -18,7 +18,7 @@ type MemoryChatbot struct {
 
 func (service *MemoryChatbot) RunMemoryChatbot() {
 
-	fmt.Println("Hello from No Memory Chatbot")
+	fmt.Println("Hello with Memory Chatbot")
 	fmt.Println("Chat with OpenAI GPT-4 is ready to talk")
 	systemMessage := "You are good personal assistant. Never response in more tha 100 words"
 	reader := bufio.NewReader(os.Stdin)
