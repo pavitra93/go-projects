@@ -28,7 +28,7 @@ func main() {
 	//}
 	//noMemoryChatService.RunNoMemoryChatbot()
 
-	fmt.Println("========Chatbot with No Memory=========")
+	fmt.Println("========Chatbot with Memory=========")
 
 	MemoryChatService := &openai_memory_chat.MemoryChatbot{
 		OpenAPIClient: openAIClient.OpenaiClient,
