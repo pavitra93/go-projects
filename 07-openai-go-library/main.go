@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go/v2"
 	"github.com/openai/openai-go/v2/option"
 	"github.com/tiktoken-go/tokenizer"
-	"os"
 )
 
 func main() {
@@ -51,6 +52,14 @@ func main() {
 	// printing first 10 embeddings
 	fmt.Println(len(embeddings.Data[0].Embedding))
 	fmt.Printf("%v\n", embeddings.Data[0].Embedding[:10])
+
+	//client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
+	//	Messages: openai.ChatCompletionMessageParamUnion {
+	//		OfSystem: openai.ChatCompletionSystemMessageParam{
+	//			Co
+	//		}
+	//	},
+	//})
 
 	completion, err := client.Completions.New(context.TODO(), openai.CompletionNewParams{
 		Model: openai.CompletionNewParamsModelGPT3_5TurboInstruct,
