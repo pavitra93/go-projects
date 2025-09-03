@@ -1,4 +1,4 @@
-package openai_no_memory_chat
+package service
 
 import (
 	"bufio"
@@ -10,16 +10,16 @@ import (
 	"github.com/openai/openai-go/v2"
 )
 
-type NoMemoryChatbot struct {
+type NoMemoryChatbotService struct {
 	OpenAPIClient *openai.Client
 	MaxTokens     int64
 	Temperature   float64
+	SystemMessage string
 }
 
-func (service *NoMemoryChatbot) RunNoMemoryChatbot() {
+func (service *NoMemoryChatbotService) RunNoMemoryChatbot() {
 
 	fmt.Println("Hello with no Memory Chatbot")
-	systemMessage := "You are good personal assistant. Never response in more tha 100 words"
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -40,7 +40,7 @@ func (service *NoMemoryChatbot) RunNoMemoryChatbot() {
 		resp, err := service.OpenAPIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 			Messages: []openai.ChatCompletionMessageParamUnion{
 				openai.UserMessage(userMessage),
-				openai.SystemMessage(systemMessage),
+				openai.SystemMessage(service.SystemMessage),
 			},
 			Model:       openai.ChatModelGPT4_1,
 			MaxTokens:   openai.Int(service.MaxTokens),

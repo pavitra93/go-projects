@@ -1,4 +1,4 @@
-package singletons
+package external
 
 import (
 	"sync"

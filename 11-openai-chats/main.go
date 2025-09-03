@@ -3,41 +3,49 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
-	openai_memory_chat "github.com/pavitra93/11-openai-chats/openai-memory-chat"
-	//openai_no_memory_chat "github.com/pavitra93/11-openai-chats/openai-no-memory-chat"
-	singletons "github.com/pavitra93/11-openai-chats/singletons"
+	singletons "github.com/pavitra93/11-openai-chats/external"
+	"github.com/pavitra93/11-openai-chats/internal/service"
 )
 
 func main() {
 	_ = godotenv.Load()
 	// Initialize openai client
 	openapiKey := os.Getenv("OPENAI_API_KEY")
+	// Initialize tokenizer client
+	maxTokens, _ := strconv.ParseInt(os.Getenv("MAX_TOKENS"), 10, 64)
+	temperature, _ := strconv.ParseFloat(os.Getenv("TEMPERATURE"), 64)
+	systemMessage := os.Getenv("SYSTEM_MESSAGE")
 	if openapiKey == "" {
 		panic("OPENAI_API_KEY not found")
 	}
 	openAIServiceClient := singletons.GetOpenAIClientInstance(openapiKey)
 
-	//fmt.Println("========Chatbot with No Memory=========")
-	//
-	//noMemoryChatService := &openai_no_memory_chat.NoMemoryChatbot{
-	//	OpenAPIClient: openAIClient.OpenaiClient,
-	//	MaxTokens:     100,
-	//	Temperature:   0.7,
-	//}
-	//noMemoryChatService.RunNoMemoryChatbot()
-
 	fmt.Println("========Chatbot with Memory=========")
 
-	MemoryChatService := &openai_memory_chat.MemoryChatbot{
+	// Initialize No Memory chatbot service
+	chatbotServiceBasic := &service.NoMemoryChatbotService{
 		OpenAPIClient: openAIServiceClient.OpenAIClient,
-		MaxTokens:     100,
-		Temperature:   0.7,
-		HistorySize:   5,
-		SystemMessage: "You are good personal assistant. Never response in more tha 100 words",
+		SystemMessage: systemMessage,
+		MaxTokens:     maxTokens,
+		Temperature:   temperature,
 	}
 
-	MemoryChatService.RunMemoryChatbot()
+	chatbotServiceBasic.RunNoMemoryChatbot()
+
+	fmt.Println("========Chatbot with No Memory=========")
+
+	// Initialize Memory chatbot service
+	//chatbotServicePremium := &service.MemoryChatbotService{
+	//	OpenAPIClient: openAIServiceClient.OpenAIClient,
+	//	MaxTokens:     maxTokens,
+	//	Temperature:   temperature,
+	//	SystemMessage: systemMessage,
+	//}
+	//
+	//worker := service.WorkerService{chatbotServicePremium}
+	//chatbotServicePremium.RunMemoryChatbot(worker)
 
 }
