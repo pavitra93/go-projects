@@ -1,4 +1,4 @@
-package singleton_openai_client
+package singletons
 
 import (
 	"sync"
@@ -8,22 +8,22 @@ import (
 )
 
 type openAIServiceClient struct {
-	OpenaiClient *openai.Client
+	OpenAIClient *openai.Client
 }
 
-var openapiInstance *openAIServiceClient
+var openAIInstance *openAIServiceClient
 var once sync.Once
 
-func GetInstance(openapiKey string) *openAIServiceClient {
+func GetOpenAIClientInstance(openapiKey string) *openAIServiceClient {
 	once.Do(func() {
 		client := openai.NewClient(
 			option.WithAPIKey(openapiKey), // defaults to os.LookupEnv("OPENAI_API_KEY")
 		)
-		openapiInstance = &openAIServiceClient{
-			OpenaiClient: &client,
+		openAIInstance = &openAIServiceClient{
+			OpenAIClient: &client,
 		}
 	})
 
-	return openapiInstance
+	return openAIInstance
 
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	openai_memory_chat "github.com/pavitra93/11-openai-chats/openai-memory-chat"
 	//openai_no_memory_chat "github.com/pavitra93/11-openai-chats/openai-no-memory-chat"
-	singleton_openai_client "github.com/pavitra93/11-openai-chats/singleton-openai-client"
+	singletons "github.com/pavitra93/11-openai-chats/singletons"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 	if openapiKey == "" {
 		panic("OPENAI_API_KEY not found")
 	}
-	openAIClient := singleton_openai_client.GetInstance(openapiKey)
+	openAIServiceClient := singletons.GetOpenAIClientInstance(openapiKey)
 
 	//fmt.Println("========Chatbot with No Memory=========")
 	//
@@ -31,10 +31,13 @@ func main() {
 	fmt.Println("========Chatbot with Memory=========")
 
 	MemoryChatService := &openai_memory_chat.MemoryChatbot{
-		OpenAPIClient: openAIClient.OpenaiClient,
+		OpenAPIClient: openAIServiceClient.OpenAIClient,
 		MaxTokens:     100,
 		Temperature:   0.7,
+		HistorySize:   5,
+		SystemMessage: "You are good personal assistant. Never response in more tha 100 words",
 	}
+
 	MemoryChatService.RunMemoryChatbot()
 
 }

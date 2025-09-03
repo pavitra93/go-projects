@@ -19,7 +19,6 @@ type NoMemoryChatbot struct {
 func (service *NoMemoryChatbot) RunNoMemoryChatbot() {
 
 	fmt.Println("Hello with no Memory Chatbot")
-	fmt.Println("Chat with OpenAI GPT-4 is ready to talk")
 	systemMessage := "You are good personal assistant. Never response in more tha 100 words"
 	reader := bufio.NewReader(os.Stdin)
 
@@ -49,7 +48,8 @@ func (service *NoMemoryChatbot) RunNoMemoryChatbot() {
 		})
 
 		if err != nil {
-			panic(err)
+			fmt.Println("Error: ", err)
+			break
 		}
 
 		// Safely print the first text part if the SDK returns structured content
@@ -57,9 +57,6 @@ func (service *NoMemoryChatbot) RunNoMemoryChatbot() {
 			fmt.Printf("Chatbot: %s\n", resp.Choices[0].Message.Content)
 			continue
 		}
-
-		// Fallback if Content is a plain string (depending on SDK shape)
-		fmt.Printf("Chatbot: %v\n", resp.Choices[0].Message.Content)
 
 	}
 
