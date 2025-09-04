@@ -23,7 +23,7 @@ func main() {
 	}
 	openAIServiceClient := singletons.GetOpenAIClientInstance(openapiKey)
 
-	fmt.Println("========Chatbot with Memory=========")
+	fmt.Println("========Chatbot with No Memory=========")
 
 	// Initialize No Memory chatbot service
 	chatbotServiceBasic := &service.NoMemoryChatbotService{
@@ -35,7 +35,7 @@ func main() {
 
 	chatbotServiceBasic.RunNoMemoryChatbot()
 
-	fmt.Println("========Chatbot with No Memory=========")
+	fmt.Println("========Chatbot with Memory=========")
 
 	// Initialize Memory chatbot service
 	//chatbotServicePremium := &service.MemoryChatbotService{
