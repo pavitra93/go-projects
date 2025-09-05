@@ -14,46 +14,46 @@ import (
 	"github.com/pavitra93/11-openai-chats/pkg/utils"
 )
 
-type MemoryChatbotService struct {
+type StreamingMemoryChatbotService struct {
 	ChatbotService *ChatbotService
 }
 
-func (m *MemoryChatbotService) RunMemoryChatbot(worker worker.Worker) {
+func (s *StreamingMemoryChatbotService) RunStreamingMemoryChatbot(worker worker.Worker) {
 
 	// start chatbot
-	fmt.Println("Hello with Memory Chatbot")
+	fmt.Println("Hello with Streaming Memory Chatbot")
 
-	// send and recieve messages channel
+	// send and receive messages channel
 	JobMessages := make(chan []openai.ChatCompletionMessageParamUnion)
 	ReceiveMessages := make(chan string)
 
-	// create done channel
+	// create a done channel
 	doneChan := make(chan bool)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// create wait group
+	// create a wait group
 	wg := &sync.WaitGroup{}
 
 	wg.Add(2)
 
 	// allow history
-	m.ChatbotService.AllowHistory = true
+	s.ChatbotService.AllowHistory = true
 
 	// set history size
-	m.ChatbotService.HistorySize = 5
+	s.ChatbotService.HistorySize = 5
 
 	// initialize history
-	m.ChatbotService.History = &openai.ChatCompletionNewParams{
+	s.ChatbotService.History = &openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(m.ChatbotService.SystemMessage),
+			openai.SystemMessage(s.ChatbotService.SystemMessage),
 		},
 	}
 
-	// start goroutine to send & recieve messages from OpenAI
-	go worker.SendMessagestoOpenAI(ctx, JobMessages, ReceiveMessages, wg, m.ChatbotService.AllowHistory)
-	go worker.RecieveMessagesfromOpenAI(ctx, ReceiveMessages, doneChan, wg)
+	// start a goroutine to send and receive messages from OpenAI
+	go worker.StreamToOpenAI(ctx, JobMessages, ReceiveMessages, wg)
+	go worker.StreamFromOpenAI(ctx, ReceiveMessages, doneChan, wg)
 
 	// initialize reader
 	reader := bufio.NewReader(os.Stdin)
@@ -87,11 +87,10 @@ func (m *MemoryChatbotService) RunMemoryChatbot(worker worker.Worker) {
 			slog.Info("Chat explicitly stopped by user")
 			return
 		default:
-			// make history window and append user message
-			m.ChatbotService.History.Messages = utils.MakeHistoryWindow(m.ChatbotService.History.Messages, userMessage, m.ChatbotService.HistorySize)
-			m.ChatbotService.History.Messages = append(m.ChatbotService.History.Messages, openai.UserMessage(userMessage))
-			slog.Info("History window created", "History", m.ChatbotService.History.Messages)
-			JobMessages <- m.ChatbotService.History.Messages
+			// make a history window and append a user message
+			s.ChatbotService.History.Messages = utils.MakeHistoryWindow(s.ChatbotService.History.Messages, userMessage, s.ChatbotService.HistorySize)
+			s.ChatbotService.History.Messages = append(s.ChatbotService.History.Messages, openai.UserMessage(userMessage))
+			JobMessages <- s.ChatbotService.History.Messages
 			slog.Info("Message sent to sender channel")
 			dispatched = true
 			fmt.Println("Bot is thinking...💭")

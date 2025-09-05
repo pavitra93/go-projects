@@ -18,9 +18,9 @@ func main() {
 
 	// Initialize slog
 	logger.SetupLogger()
-	// Initialize openai client
+
+	// Get environment variables
 	openapiKey := os.Getenv("OPENAI_API_KEY")
-	// Initialize tokenizer client
 	maxTokens, _ := strconv.ParseInt(os.Getenv("MAX_TOKENS"), 10, 64)
 	temperature, _ := strconv.ParseFloat(os.Getenv("TEMPERATURE"), 64)
 	systemMessage := os.Getenv("SYSTEM_MESSAGE")
@@ -32,31 +32,30 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Initialize openai client
 	openAIServiceClient := singletons.GetOpenAIClientInstance(openapiKey)
 
-	//fmt.Println("========Chatbot with No Memory=========")
-	//
-	//// Initialize No Memory chatbot service
-	//chatbotServiceBasic := &service.NoMemoryChatbotService{
-	//	OpenAPIClient: openAIServiceClient.OpenAIClient,
-	//	SystemMessage: systemMessage,
-	//	MaxTokens:     maxTokens,
-	//	Temperature:   temperature,
-	//}
-	//
-	//chatbotServiceBasic.RunNoMemoryChatbot()
-
-	fmt.Println("========Chatbot with Memory=========")
-
-	// Initialize Memory chatbot service
-	chatbotServicePremium := &service.MemoryChatbotService{
+	// Initialize chatbot service
+	ChatbotService := &service.ChatbotService{
 		OpenAPIClient: openAIServiceClient.OpenAIClient,
 		MaxTokens:     maxTokens,
 		Temperature:   temperature,
 		SystemMessage: systemMessage,
 	}
 
-	worker := service.WorkerService{chatbotServicePremium}
-	chatbotServicePremium.RunMemoryChatbot(worker)
+	// Initialize worker service
+	WorkerService := &service.WorkerService{ChatbotService}
 
+	//fmt.Println("========Chatbot with No Memory=========")
+
+	//NoMemoryChatbotService := &service.NoMemoryChatbotService{ChatbotService}
+	//NoMemoryChatbotService.RunNoMemoryChatbot(WorkerService)
+
+	//fmt.Println("========Chatbot with Memory=========")
+	//MemoryChatbotService := &service.MemoryChatbotService{ChatbotService}
+	//MemoryChatbotService.RunMemoryChatbot(WorkerService)
+
+	fmt.Println("========Chatbot with Streaming Memory=========")
+	StreamingChatBotService := &service.StreamingMemoryChatbotService{ChatbotService}
+	StreamingChatBotService.RunStreamingMemoryChatbot(WorkerService)
 }
