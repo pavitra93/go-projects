@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/joho/godotenv"
-	singletons "github.com/pavitra93/11-openai-chats/external"
+	singletons "github.com/pavitra93/11-openai-chats/external/clients"
 	"github.com/pavitra93/11-openai-chats/internal/service"
 	"github.com/pavitra93/11-openai-chats/pkg/logger"
 )
