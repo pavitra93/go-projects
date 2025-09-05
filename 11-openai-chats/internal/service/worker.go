@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"sync"
 
 	"github.com/openai/openai-go/v2"
@@ -38,6 +39,8 @@ func (w *WorkerService) SendMessagestoOpenAI(ctx context.Context, messages <-cha
 				return
 			}
 
+			slog.Info("Response from OpenAI", "Content", resp.Choices[0].Message.Content, "finish reason", resp.Choices[0].FinishReason)
+
 			// Safely print the first text part if the SDK returns structured content
 			if len(resp.Choices) > 0 && len(resp.Choices[0].Message.Content) > 0 {
 				w.MemoryChatbotService.History.Messages = append(w.MemoryChatbotService.History.Messages, resp.Choices[0].Message.ToParam())
@@ -45,6 +48,7 @@ func (w *WorkerService) SendMessagestoOpenAI(ctx context.Context, messages <-cha
 
 			// send messages back to channel
 			reciever <- resp.Choices[0].Message.Content
+			slog.Info("Message sent to reciever channel")
 		}
 
 	}
@@ -61,6 +65,7 @@ func (w *WorkerService) RecieveMessagesfromOpenAI(ctx context.Context, messages 
 			if !ok {
 				return
 			}
+			slog.Info("Message recieved from reciever channel", "Message", msg)
 			fmt.Printf("🤖 Chatbot: %s\n", msg)
 			done <- true
 		}

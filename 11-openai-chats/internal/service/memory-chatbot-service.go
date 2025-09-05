@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 	"sync"
@@ -61,6 +62,8 @@ func (service *MemoryChatbotService) RunMemoryChatbot(worker WorkerService) {
 		fmt.Print("🧔🏻‍♂️ You: ")
 		userMessage, _ := reader.ReadString('\n')
 		userMessage = strings.TrimSpace(userMessage)
+		slog.Info(userMessage)
+
 		// handle exit, quit and bye
 		switch userMessage {
 		case "", " ":
@@ -79,13 +82,14 @@ func (service *MemoryChatbotService) RunMemoryChatbot(worker WorkerService) {
 
 			// close channels
 			close(ReceiveMessages)
-
+			slog.Info("Chat explicitly stopped by user")
 			return
 		default:
 			// make history window and append user message
 			service.History.Messages = utils.MakeHistoryWindow(service.History.Messages, userMessage, service.HistorySize)
 			service.History.Messages = append(service.History.Messages, openai.UserMessage(userMessage))
 			JobMessages <- service.History.Messages
+			slog.Info("Message sent to sender channel")
 			dispatched = true
 			fmt.Println("Bot is thinking...💭")
 
