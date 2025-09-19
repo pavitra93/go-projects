@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 func producer(Channel chan int, wg *sync.WaitGroup) {
@@ -22,7 +23,8 @@ func consumer(Channel chan int) {
 func main() {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
-	Channel := make(chan int)
+	start := time.Now()
+	Channel := make(chan int, 10)
 
 	//Producer
 	go producer(Channel, wg)
@@ -32,4 +34,6 @@ func main() {
 
 	wg.Wait()
 	fmt.Println("Done from main thread")
+	end := time.Now()
+	fmt.Println(end.Sub(start))
 }

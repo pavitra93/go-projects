@@ -12,8 +12,8 @@ type SafeCounter struct {
 
 func (sc *SafeCounter) Inc(key string) {
 	sc.mutex.Lock()
+	defer sc.mutex.Unlock()
 	sc.counter[key]++
-	sc.mutex.Unlock()
 }
 
 func (sc *SafeCounter) Value(key string) int {
